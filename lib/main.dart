@@ -13,8 +13,6 @@ void main() {
   ));
 }
 
-// HALAMAN UTAMA DAN NAVIGASI RESPONSIF
-
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -129,8 +127,6 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-// HALAMAN HOME
-
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -161,7 +157,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// DAFTAR MATA KULIAH DARI JSON
 
 class CoursesPage extends StatelessWidget {
   final Future<Map<String, dynamic>> dataFuture;
@@ -170,6 +165,34 @@ class CoursesPage extends StatelessWidget {
     super.key,
     required this.dataFuture,
   });
+
+  Widget buildCourseItem(
+      BuildContext context,
+      dynamic item,
+      ) {
+    final course = Map<String, dynamic>.from(item);
+
+    return CourseCard(
+      course: course,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CourseDetailPage(
+              course: course,
+            ),
+          ),
+        );
+      },
+      onLongPress: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Mata kuliah: ${course['title']}'),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -190,49 +213,61 @@ class CoursesPage extends StatelessWidget {
 
         final courses = snapshot.data!['courses'] as List<dynamic>;
 
-        return ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            const Text(
-              'Daftar Mata Kuliah',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isExpanded = constraints.maxWidth >= 840;
 
-            for (final item in courses)
-              CourseCard(
-                course: Map<String, dynamic>.from(item),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CourseDetailPage(
-                        course: Map<String, dynamic>.from(item),
-                      ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Text(
+                    'Daftar Mata Kuliah',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
                     ),
-                  );
-                },
-                onLongPress: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Mata kuliah: ${item['title']}',
-                      ),
+                  ),
+                ),
+                Expanded(
+                  child: isExpanded
+                      ? GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 4,
+                      childAspectRatio: 2.8,
                     ),
-                  );
-                },
-              ),
-          ],
+                    itemCount: courses.length,
+                    itemBuilder: (context, index) {
+                      return buildCourseItem(
+                        context,
+                        courses[index],
+                      );
+                    },
+                  )
+                      : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: courses.length,
+                    itemBuilder: (context, index) {
+                      return buildCourseItem(
+                        context,
+                        courses[index],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 }
-
-// KARTU MATA KULIAH DAN FAVORITE
 
 class CourseCard extends StatefulWidget {
   final Map<String, dynamic> course;
@@ -315,8 +350,6 @@ class _CourseCardState extends State<CourseCard> {
   }
 }
 
-// HALAMAN DETAIL MATA KULIAH
-
 class CourseDetailPage extends StatelessWidget {
   final Map<String, dynamic> course;
 
@@ -361,8 +394,6 @@ class CourseDetailPage extends StatelessWidget {
   }
 }
 
-// FORM FEEDBACK, VALIDASI, DIALOG, DAN LOADING
-
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -398,17 +429,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> submitFeedback() async {
-    // 1. Validasi input
     if (!formKey.currentState!.validate()) {
       return;
     }
-
-    // 2. Simpan nilai form sementara
     final name = nameController.text.trim();
     final nim = nimController.text.trim();
     final comment = commentController.text.trim();
-
-    // 3. Tampilkan dialog konfirmasi
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
@@ -438,8 +464,6 @@ class _ProfilePageState extends State<ProfilePage> {
     if (!mounted || confirmed != true) {
       return;
     }
-
-    // 4. Tampilkan loading
     setState(() {
       isLoading = true;
     });
@@ -449,16 +473,12 @@ class _ProfilePageState extends State<ProfilePage> {
     if (!mounted) {
       return;
     }
-
-    // 5. Selesaikan simulasi penyimpanan
     setState(() {
       isLoading = false;
       submittedName = name;
       submittedNim = nim;
       submittedComment = comment;
     });
-
-    // 6. Tampilkan SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Data berhasil disimpan'),
