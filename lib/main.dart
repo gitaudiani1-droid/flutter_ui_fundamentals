@@ -115,12 +115,10 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
 class CoursesPage extends StatelessWidget {
   final Future<Map<String, dynamic>> dataFuture;
-  const CoursesPage({
-    super.key,
-    required this.dataFuture,
-  });
+  const CoursesPage({super.key, required this.dataFuture});
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, dynamic>>(
@@ -137,17 +135,129 @@ class CoursesPage extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           children: [
             const Text('Daftar Mata Kuliah', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            for (final course in courses)
-              Card(
-                child: ListTile(
-                  leading: const Icon(Icons.book),
-                  title: Text(course['title'].toString()),
-                  subtitle: Text('Kode: ${course['code']}'),
-                ),
+            const SizedBox(height: 12),
+            for (final item in courses)
+              CourseCard(
+                course: Map<String, dynamic>.from(item),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CourseDetailPage(
+                        course: Map<String, dynamic>.from(item),
+                      ),
+                    ),
+                  );
+                },
+                onLongPress: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Mata kuliah: ${item['title']}'),
+                    ),
+                  );
+                },
               ),
           ],
         );
       },
+    );
+  }
+}
+class CourseCard extends StatefulWidget {
+  final Map<String, dynamic> course;
+  final VoidCallback onTap;
+  final VoidCallback onLongPress;
+
+  const CourseCard({
+    super.key,
+    required this.course,
+    required this.onTap,
+    required this.onLongPress,
+  });
+  @override
+  State<CourseCard> createState() => _CourseCardState();
+}
+class _CourseCardState extends State<CourseCard> {
+  bool isFavorite = false;
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: widget.onTap,
+        onLongPress: widget.onLongPress,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Icon(Icons.book, size: 32),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.course['title'].toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text('Kode: ${widget.course['code']}'),
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {isFavorite = !isFavorite;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        isFavorite
+                            ? 'Ditambahkan ke favorit'
+                            : 'Dihapus dari favorit',
+                      ),
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                },
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? Colors.red : Colors.grey,
+                ),
+                tooltip: 'Favorite',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+class CourseDetailPage extends StatelessWidget {
+  final Map<String, dynamic> course;
+  const CourseDetailPage({super.key,required this.course});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Detail Mata Kuliah')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('I Gusti Ayu Agung Gita Udiani\nNIM: 2415051010', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Divider(height: 32),
+            Text(course['title'].toString(), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            Text('Kode: ${course['code']}'),
+            Text('SKS: ${course['credits']}'),
+            Text('Status: ${course['status']}'),
+          ],
+        ),
+      ),
     );
   }
 }
