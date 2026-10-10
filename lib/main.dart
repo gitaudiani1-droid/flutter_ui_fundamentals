@@ -268,26 +268,101 @@ class CoursesPagePlaceholder extends StatelessWidget {
     return const Center(child: Text('Courses'));
   }
 }
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+class _ProfilePageState extends State<ProfilePage> {
+  final formKey = GlobalKey<FormState>();
+  final String studentName = 'I Gusti Ayu Agung Gita Udiani';
+  final String studentId = '2415051010';
+  String feedbackResult = '';
+  @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(radius: 45, child: Icon(Icons.person, size: 50)),
-            SizedBox(height: 20),
-            Text('Profil Mahasiswa', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            SizedBox(height: 16),
-            Text(studentName),
-            SizedBox(height: 8),
-            Text('NIM: $studentId'),
-            SizedBox(height: 8),
-            Text('Program Studi: Pendidikan Teknik Informatika'),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Form Feedback'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text('Kirim Feedback', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 20),
+
+              TextFormField(
+                initialValue: studentName,
+                decoration: const InputDecoration(labelText: 'Nama', border: OutlineInputBorder()),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Nama wajib diisi';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              TextFormField(
+                initialValue: studentId,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'NIM', border: OutlineInputBorder()),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'NIM wajib diisi';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              TextFormField(
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  labelText: 'Komentar',
+                  hintText: 'Tulis feedback minimal 5 karakter',
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().length < 5) {
+                    return 'Komentar minimal 5 karakter';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  feedbackResult = value!.trim();
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    formKey.currentState!.save();
+                    setState(() {
+                      feedbackResult = feedbackResult;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Feedback berhasil dikirim!')),
+                    );
+                  }
+                },
+                child: const Text('Kirim Feedback'),
+              ),
+
+              if (feedbackResult.isNotEmpty) ...[
+                const SizedBox(height: 24),
+                const Text('Feedback berhasil divalidasi:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                const SizedBox(height: 8),
+                Text('Nama: $studentName'),
+                Text('NIM: $studentId'),
+                Text('Komentar: $feedbackResult'),
+              ],
+            ],
+          ),
         ),
       ),
     );
