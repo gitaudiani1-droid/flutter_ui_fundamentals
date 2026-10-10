@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 const String studentName = 'I Gusti Ayu Agung Gita Udiani';
 const String studentId = '2415051010';
+const List<String> skills = [
+  'Flutter','Dart', 'Web', 'Mobile', 'Expanded', 'Flexible', 'Wrap',
+];
 
 void main() {
   runApp(const CourseExplorerApp());
@@ -22,174 +25,90 @@ class HomePage extends StatelessWidget {
   const HomePage({super.key});
   @override
   Widget build(BuildContext context) {
+    Widget buildBox(String text){
+      return Container(
+        height: 100,
+        alignment: Alignment.center,
+        color: Colors.cyan,
+        child: Text('Panel $text', style: const TextStyle(color: Colors.white)),
+      );
+    }
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Course Explorer'),
-      ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth < 600) {
-            return const CompactLayout();
-          } else if (constraints.maxWidth < 840) {
-            return const MediumLayout();
-          } else {
-            return const ExpandedLayout();
-          }
-        },
-      ),
-    );
-  }
-}
-
-class StudentIdentity extends StatelessWidget {
-  const StudentIdentity({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(16),
-      child: Text('$studentId - $studentName', style: TextStyle(fontWeight: FontWeight.bold)),
-    );
-  }
-}
-
-const List<Map<String, dynamic>> courses = [
-  {'title': 'Flutter Dasar','description': 'Dasar-dasar Flutter', 'icon': Icons.flutter_dash},
-  {'title': 'Dart','description': 'Dasar-dasar dan komponen Dart', 'icon': Icons.web},
-  {'title': 'Pemrograman Mobile','description': 'Dasar Pemrograman Mobile', 'icon': Icons.mobile_friendly},
-];
-
-class CompactLayout extends StatelessWidget {
-  const CompactLayout({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const StudentIdentity(),
-        const Divider(),
-        const Padding(
-          padding: EdgeInsets.all(16),
-          child: Text('Compact Layout', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(12),
-            children: courses.map((course) {
-              return CourseCard(
-                title: course['title'] as String,
-                description: course['description'] as String,
-                icon: course['icon'] as IconData,
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class MediumLayout extends StatelessWidget {
-  const MediumLayout({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const StudentIdentity(),
-        const Divider(),
-        const Padding(
-          padding: EdgeInsets.all(16),
-          child: Text('Medium Layout', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-        ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(12),
-            children: courses.map((course) {
-              return CourseCard(
-                title: course['title'] as String,
-                description: course['description'] as String,
-                icon: course['icon'] as IconData,
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class ExpandedLayout extends StatelessWidget {
-  const ExpandedLayout({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const StudentIdentity(),
-        const Divider(),
-        const Padding(
-          padding: EdgeInsets.all(24),
-          child: Text('Expanded Layout', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),),
-        ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(24),
-            children: courses.map((course) {
-              return CourseCard(
-                title: course['title'] as String,
-                description: course['description'] as String,
-                icon: course['icon'] as IconData,
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class CourseCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final IconData icon;
-
-  const CourseCard({
-    super.key,
-    required this.title,
-    required this.description,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
+      appBar: AppBar(title: const Text('Course Explorer')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 36, color: Colors.blue),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+            const Text('$studentId - $studentName', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(flex: 2,child: buildBox('A')),
+                const SizedBox(width: 8),
+                Expanded(child: buildBox('B')),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Flexible(
+                  flex: 2, 
+                  child: Container(
+                    width: double.infinity, 
+                    padding: const EdgeInsets.all(16), 
+                    color: Colors.tealAccent.shade100,
+                    child: const Text('Flexible A', textAlign: TextAlign.center)),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      color: Colors.teal.shade100,
+                      child: const Text('Flexible B', textAlign: TextAlign.center)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: skills.map((e) => Chip(label: Text(e))).toList(),
+            ),
+            const SizedBox(height: 24),
+            const Text('Perbandingan Row dan Wrap', style: TextStyle(fontSize: 20)),
+            const SizedBox(height: 24),
+            const Text('Row biasa tidak otomatis memindahkan child ke baris berikutnya. Wrap dapat membungkus child saat ruang tidak cukup.'),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text('Contoh Row: semua child tetap disusun secara horizontal. Jika ukurannya melebihi ruang tersedia, dapat terjadi overflow.'),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+Widget buildBox(String text, Color color){
+  return Container(
+    height: 120,
+    alignment: Alignment.center,
+    padding: const EdgeInsets.all(8),
+    decoration: BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Text(
+      text,
+      textAlign: TextAlign.center,
+      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+    ),
+  );
 }
