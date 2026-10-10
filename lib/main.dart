@@ -1,117 +1,73 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 const String studentName = 'I Gusti Ayu Agung Gita Udiani';
 const String studentId = '2415051010';
 
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: HomePage(),
+    home: ProfilePage(),
   ));
 }
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-  Future<Map<String, dynamic>> loadData() async {
-    final jsonString = await rootBundle.loadString('assets/data/student_data.json');
-    return jsonDecode(jsonString) as Map<String, dynamic>;
-  }
-  int columnsFor(double width) {
-    if (width < 600) return 1;
-    if (width < 840) return 2;
-    return 3;
-  }
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Course Explorer'), backgroundColor: Colors.cyan),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: loadData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(child: Text('Gagal memuat data JSON'));
-          }
-          final data = snapshot.data!;
-          final student = data['student'] as Map<String, dynamic>;
-          final courses = data['courses'] as List<dynamic>;
-
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  '${student['name']}\nNIM: ${student['nim']}',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              const Divider(),
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return GridView.builder(
-                      padding: const EdgeInsets.all(12),
-                      itemCount: courses.length,
-                      gridDelegate:
-                      SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount:
-                        columnsFor(constraints.maxWidth),
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 1.3,
-                      ),
-                      itemBuilder: (context, index) {
-                        final course =
-                        courses[index] as Map<String, dynamic>;
-                        return CourseCard(course: course);
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class CourseCard extends StatelessWidget {
-  final Map<String, dynamic> course;
-  const CourseCard({super.key, required this.course});
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.cyan.shade50,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(title: const Text('Student Profile')),
+      body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              course['code'].toString(),
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
+            const Text('$studentName\nNIM: $studentId', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 24),
+            const Text('Form Profil Mahasiswa', style: TextStyle(fontSize: 20)),
+            const SizedBox(height: 16),
+
+            const TextField(
+              decoration: InputDecoration(labelText: 'Nama Lengkap', border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(labelText: 'Program Studi', border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 16),
+
+            const TextField(
+              decoration: InputDecoration(
+                labelText: 'Tentang Saya',
+                border: OutlineInputBorder(),
               ),
+              maxLines: 4,
             ),
-            const SizedBox(height: 8),
-            Text(
-              course['title'].toString(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            const SizedBox(height: 12),
+            for (int i = 1; i <= 5; i++)
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.school),
+                  title: Text('Informasi Akademik $i'),
+                  subtitle: const Text('Detail informasi mahasiswa'),
+                ),
+              ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Informasi disimpan'),
+                  ),
+                );
+              },
+              child: const Text('Simpan Profil'),
             ),
-            const SizedBox(height: 8),
-            Text('${course['credits']} SKS'),
-            Text('Status: ${course['status']}'),
           ],
         ),
       ),
