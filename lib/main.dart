@@ -5,68 +5,59 @@ const String studentId = '2415051010';
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: ProfilePage(),
+    home: HomePage(),
   ));
 }
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: const Text('Student Profile')),
-      body: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: const EdgeInsets.all(16),
+      appBar: AppBar(title: const Text('Home Page')),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('$studentName\nNIM: $studentId', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(studentName, textAlign: TextAlign.center, style: TextStyle(fontSize: 18)),
+            const SizedBox(height: 8),
+            const Text('NIM: $studentId'),
             const SizedBox(height: 24),
-            const Text('Form Profil Mahasiswa', style: TextStyle(fontSize: 20)),
-            const SizedBox(height: 16),
-
-            const TextField(
-              decoration: InputDecoration(labelText: 'Nama Lengkap', border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(labelText: 'Program Studi', border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-
-            const TextField(
-              decoration: InputDecoration(
-                labelText: 'Tentang Saya',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 4,
-            ),
-            const SizedBox(height: 12),
-            for (int i = 1; i <= 5; i++)
-              Card(
-                child: ListTile(
-                  leading: const Icon(Icons.school),
-                  title: Text('Informasi Akademik $i'),
-                  subtitle: const Text('Detail informasi mahasiswa'),
-                ),
-              ),
-            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Informasi disimpan'),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DetailPage(),
                   ),
                 );
               },
-              child: const Text('Simpan Profil'),
+              child: const Text('Buka Detail'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+class DetailPage extends StatelessWidget {
+  const DetailPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Detail Page')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Halaman Detail Mahasiswa', style: TextStyle(fontSize: 20)),
+            const SizedBox(height: 16),
+            const Text('$studentName\nNIM: $studentId', textAlign: TextAlign.center),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Kembali'),
             ),
           ],
         ),
