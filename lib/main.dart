@@ -1,114 +1,120 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 const String studentName = 'I Gusti Ayu Agung Gita Udiani';
 const String studentId = '2415051010';
-const List<String> skills = [
-  'Flutter','Dart', 'Web', 'Mobile', 'Expanded', 'Flexible', 'Wrap',
-];
 
 void main() {
-  runApp(const CourseExplorerApp());
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: HomePage(),
+  ));
 }
-
-class CourseExplorerApp extends StatelessWidget {
-  const CourseExplorerApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Course Explorer',
-      home: const HomePage(),
-    );
-  }
-}
-
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+  Future<Map<String, dynamic>> loadData() async {
+    final jsonString = await rootBundle.loadString('assets/data/student_data.json');
+    return jsonDecode(jsonString) as Map<String, dynamic>;
+  }
+  int columnsFor(double width) {
+    if (width < 600) return 1;
+    if (width < 840) return 2;
+    return 3;
+  }
   @override
   Widget build(BuildContext context) {
-    Widget buildBox(String text){
-      return Container(
-        height: 100,
-        alignment: Alignment.center,
-        color: Colors.cyan,
-        child: Text('Panel $text', style: const TextStyle(color: Colors.white)),
-      );
-    }
     return Scaffold(
-      appBar: AppBar(title: const Text('Course Explorer')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('$studentId - $studentName', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(flex: 2,child: buildBox('A')),
-                const SizedBox(width: 8),
-                Expanded(child: buildBox('B')),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Flexible(
-                  flex: 2, 
-                  child: Container(
-                    width: double.infinity, 
-                    padding: const EdgeInsets.all(16), 
-                    color: Colors.tealAccent.shade100,
-                    child: const Text('Flexible A', textAlign: TextAlign.center)),
+      appBar: AppBar(title: const Text('Course Explorer'), backgroundColor: Colors.cyan),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: loadData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError || !snapshot.hasData) {
+            return const Center(child: Text('Gagal memuat data JSON'));
+          }
+          final data = snapshot.data!;
+          final student = data['student'] as Map<String, dynamic>;
+          final courses = data['courses'] as List<dynamic>;
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  '${student['name']}\nNIM: ${student['nim']}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
-                Flexible(
-                  flex: 1,
-                  child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      color: Colors.teal.shade100,
-                      child: const Text('Flexible B', textAlign: TextAlign.center)),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: skills.map((e) => Chip(label: Text(e))).toList(),
-            ),
-            const SizedBox(height: 24),
-            const Text('Perbandingan Row dan Wrap', style: TextStyle(fontSize: 20)),
-            const SizedBox(height: 24),
-            const Text('Row biasa tidak otomatis memindahkan child ke baris berikutnya. Wrap dapat membungkus child saat ruang tidak cukup.'),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text('Contoh Row: semua child tetap disusun secara horizontal. Jika ukurannya melebihi ruang tersedia, dapat terjadi overflow.'),
-            ),
-          ],
-        ),
+              const Divider(),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(12),
+                      itemCount: courses.length,
+                      gridDelegate:
+                      SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount:
+                        columnsFor(constraints.maxWidth),
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        childAspectRatio: 1.3,
+                      ),
+                      itemBuilder: (context, index) {
+                        final course =
+                        courses[index] as Map<String, dynamic>;
+                        return CourseCard(course: course);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 }
 
-Widget buildBox(String text, Color color){
-  return Container(
-    height: 120,
-    alignment: Alignment.center,
-    padding: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      color: color,
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Text(
-      text,
-      textAlign: TextAlign.center,
-      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-    ),
-  );
+class CourseCard extends StatelessWidget {
+  final Map<String, dynamic> course;
+  const CourseCard({super.key, required this.course});
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.cyan.shade50,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              course['code'].toString(),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              course['title'].toString(),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text('${course['credits']} SKS'),
+            Text('Status: ${course['status']}'),
+          ],
+        ),
+      ),
+    );
+  }
 }
