@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'models/course.dart';
 import 'package:provider/provider.dart';
-import 'provider/course_state.dart';
+import 'providers/course_state.dart';
 import 'services/course_service.dart';
 const String studentName = 'I Gusti Ayu Agung Gita Udiani';
 const String studentId = '2415051010';
