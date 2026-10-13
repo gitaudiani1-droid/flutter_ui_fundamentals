@@ -150,21 +150,10 @@ class _CoursesPageState extends State<CoursesPage> {
     return CourseCard(
       key: ValueKey(courseCode),
       course: course,
-      isFavorite: favoriteCourses.contains(courseCode),
+      isFavorite: context.watch<CourseState>()
+          .isFavorite(courseCode),
       onFavoriteChanged: () {
-        toggleFavorite(courseCode);
-        final isNowFavorite =
-        favoriteCourses.contains(courseCode);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              isNowFavorite
-                  ? 'Ditambahkan ke favorit'
-                  : 'Dihapus dari favorit',
-            ),
-            duration: const Duration(seconds: 1),
-          ),
-        );
+        context.read<CourseState>().toggleFavorite(courseCode);
       },
       onTap: () {
         Navigator.push(
@@ -213,14 +202,12 @@ class _CoursesPageState extends State<CoursesPage> {
                   padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Text('Daftar Mata Kuliah \n$studentId - $studentName',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ValueListenableBuilder<int>(
-                    valueListenable: favoriteCount,
-                    builder: (context, value, child) {
-                      return Text('Jumlah Favorite: $value',style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.deepPurple));
-                    },
-                  ),
+                Consumer<CourseState>(
+                  builder: (context, courseState, child) {
+                    return Text(
+                      'Jumlah Favorite: ${courseState.favoriteCount}',
+                    );
+                  },
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
