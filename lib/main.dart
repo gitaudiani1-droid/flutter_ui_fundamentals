@@ -1,18 +1,80 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'models/course.dart';
 import 'package:provider/provider.dart';
 import 'provider/course_state.dart';
 const String studentName = 'I Gusti Ayu Agung Gita Udiani';
 const String studentId = '2415051010';
 
+
+Future<Course> loadOneCourse() async {
+  final jsonString = await rootBundle.loadString(
+    'assets/data/student_data.json',
+  );
+
+  final Map<String, dynamic> data = jsonDecode(jsonString);
+  final List<dynamic> courses = data['courses'];
+
+  return Course.fromJson(
+    Map<String, dynamic>.from(courses.first),
+  );
+}
+
 void main() {
   runApp(
     ChangeNotifierProvider(
       create: (context) => CourseState(),
-      child: MaterialApp(home: MainPage()),
+      child: MaterialApp(home: const CourseModelPreview()),
     ),
   );
+}
+
+
+class CourseModelPreview extends StatelessWidget {
+  const CourseModelPreview({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Preview Course Model'),
+      ),
+      body: FutureBuilder<Course>(
+        future: loadOneCourse(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState ==
+              ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+
+          final course = snapshot.data!;
+
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Card(
+              child: ListTile(
+                title: Text(course.title),
+                subtitle: Text(
+                  'Kode: ${course.code}\n'
+                      'SKS: ${course.credits}\n'
+                      'Status: ${course.status}',
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
 class MainPage extends StatefulWidget {
