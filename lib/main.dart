@@ -4,22 +4,9 @@ import 'package:flutter/services.dart';
 import 'models/course.dart';
 import 'package:provider/provider.dart';
 import 'provider/course_state.dart';
+import 'services/course_service.dart';
 const String studentName = 'I Gusti Ayu Agung Gita Udiani';
 const String studentId = '2415051010';
-
-
-Future<Course> loadOneCourse() async {
-  final jsonString = await rootBundle.loadString(
-    'assets/data/student_data.json',
-  );
-
-  final Map<String, dynamic> data = jsonDecode(jsonString);
-  final List<dynamic> courses = data['courses'];
-
-  return Course.fromJson(
-    Map<String, dynamic>.from(courses.first),
-  );
-}
 
 void main() {
   runApp(
@@ -29,54 +16,41 @@ void main() {
     ),
   );
 }
-
-
 class CourseModelPreview extends StatelessWidget {
   const CourseModelPreview({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Preview Course Model'),
-      ),
-      body: FutureBuilder<Course>(
-        future: loadOneCourse(),
+      appBar: AppBar(title: const Text('Preview Course Model')),
+      body: FutureBuilder<List<Course>>(
+        future: CourseService().loadCourses(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
           }
-
           if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
+            return Center(child: Text('Error: ${snapshot.error}'));
           }
-
-          final course = snapshot.data!;
-
-          return Padding(
-            padding: const EdgeInsets.all(16),
-            child: Card(
-              child: ListTile(
+          final courses = snapshot.data ?? [];
+          if (courses.isEmpty) {
+            return const Center(child: Text('Tidak ada data mata kuliah'));
+          }
+          return ListView.builder(
+            itemCount: courses.length,
+            itemBuilder: (context, index) {
+              final course = courses[index];
+              return ListTile(
                 title: Text(course.title),
-                subtitle: Text(
-                  'Kode: ${course.code}\n'
-                      'SKS: ${course.credits}\n'
-                      'Status: ${course.status}',
-                ),
-              ),
-            ),
+                subtitle: Text('${course.code} • ${course.credits} SKS'),
+                trailing: Text(course.status),
+              );
+            },
           );
         },
-      ),
+      )
     );
   }
 }
-
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
   @override
