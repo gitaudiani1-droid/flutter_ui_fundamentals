@@ -1,15 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'provider/course_state.dart';
 const String studentName = 'I Gusti Ayu Agung Gita Udiani';
 const String studentId = '2415051010';
 
 void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: MainPage(),
-  ));
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => CourseState(),
+      child: MaterialApp(home: MainPage()),
+    ),
+  );
 }
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
   @override
