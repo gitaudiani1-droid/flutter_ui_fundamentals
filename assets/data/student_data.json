@@ -8,6 +8,6 @@
         {"code": "MOB02", "title": "Dart Fundamentals", "credits": 2, "status": "done"},
         {"code": "MOB03", "title": "Flutter UI Fundamentals", "credits": 3, "status": "active"},
         {"code": "MOB04", "title": "Responsive Layout", "credits": 2, "status": "planned"},
-        {"code": "MOB01", "title": "Mobile Application Architecture", "credits": 3, "status": "planned"}
+        {"code": "MOB05", "title": "Mobile Application Architecture", "credits": 3, "status": "planned"}
     ]
 }

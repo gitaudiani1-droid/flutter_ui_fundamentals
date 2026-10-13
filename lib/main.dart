@@ -125,6 +125,7 @@ class CoursesPage extends StatefulWidget {
 }
 class _CoursesPageState extends State<CoursesPage> {
   final Set<String> favoriteCourses = {};
+  final ValueNotifier<int> favoriteCount = ValueNotifier<int>(0);
   void toggleFavorite(String courseCode) {
     setState(() {
       if (favoriteCourses.contains(courseCode)) {
@@ -133,6 +134,7 @@ class _CoursesPageState extends State<CoursesPage> {
         favoriteCourses.add(courseCode);
       }
     });
+    favoriteCount.value = favoriteCourses.length;
   }
   Widget buildCourseItem(
       BuildContext context,
@@ -141,6 +143,7 @@ class _CoursesPageState extends State<CoursesPage> {
     final course = Map<String, dynamic>.from(item);
     final courseCode = course['code'].toString();
     return CourseCard(
+      key: ValueKey(courseCode),
       course: course,
       isFavorite: favoriteCourses.contains(courseCode),
       onFavoriteChanged: () {
@@ -178,6 +181,11 @@ class _CoursesPageState extends State<CoursesPage> {
     );
   }
   @override
+  void dispose() {
+    favoriteCount.dispose();
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<String, dynamic>>(
       future: widget.dataFuture,
@@ -198,7 +206,26 @@ class _CoursesPageState extends State<CoursesPage> {
               children: [
                 const Padding(
                   padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Text('Daftar Mata Kuliah',style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold)),
+                  child: Text('Daftar Mata Kuliah \n$studentId - $studentName',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ValueListenableBuilder<int>(
+                    valueListenable: favoriteCount,
+                    builder: (context, value, child) {
+                      return Text('Jumlah Favorite: $value',style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.deepPurple));
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      favoriteCount.value++;
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Tambah Counter Eksperimen'),
+                  ),
                 ),
                 Expanded(
                   child: isExpanded
