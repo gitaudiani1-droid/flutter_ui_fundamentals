@@ -3,16 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'models/course.dart';
 import 'package:provider/provider.dart';
+import 'providers/course_provider.dart';
+import 'repositories/course_repository.dart';
 import 'providers/course_state.dart';
 import 'services/course_service.dart';
 const String studentName = 'I Gusti Ayu Agung Gita Udiani';
 const String studentId = '2415051010';
 
+
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => CourseState(),
-      child: MaterialApp(home: const CourseModelPreview()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<CourseState>(
+          create: (_) => CourseState(),
+        ),
+        ChangeNotifierProvider<CourseProvider>(
+          create: (_) => CourseProvider(
+            CourseRepository(CourseService()),
+          )..loadCourses(),
+        ),
+      ],
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: CourseModelPreview(),
+      ),
     ),
   );
 }
@@ -22,32 +37,38 @@ class CourseModelPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Preview Course Model')),
-      body: FutureBuilder<List<Course>>(
-        future: CourseService().loadCourses(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+      body: Consumer<CourseProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+          if (provider.error != null) {
+            return Center(
+              child: Text('Gagal memuat data: ${provider.error}',textAlign: TextAlign.center),
+            );
           }
-          final courses = snapshot.data ?? [];
-          if (courses.isEmpty) {
-            return const Center(child: Text('Tidak ada data mata kuliah'));
+          if (provider.courses.isEmpty) {
+            return const Center(
+              child: Text('Belum ada data mata kuliah'),
+            );
           }
           return ListView.builder(
-            itemCount: courses.length,
+            itemCount: provider.courses.length,
             itemBuilder: (context, index) {
-              final course = courses[index];
+              final course = provider.courses[index];
               return ListTile(
                 title: Text(course.title),
-                subtitle: Text('${course.code} • ${course.credits} SKS'),
+                subtitle: Text(
+                  '${course.code} • ${course.credits} SKS',
+                ),
                 trailing: Text(course.status),
               );
             },
           );
         },
-      )
+      ),
     );
   }
 }
