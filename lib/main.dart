@@ -223,9 +223,9 @@ class CoursesPage extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Text(
-                    'Daftar Mata Kuliah',
+                    'Daftar Mata Kuliah \n $studentId - $studentName',
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
