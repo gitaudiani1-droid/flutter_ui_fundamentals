@@ -113,6 +113,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
 class CoursesPage extends StatefulWidget {
   final Future<Map<String, dynamic>> dataFuture;
   const CoursesPage({
@@ -123,24 +124,33 @@ class CoursesPage extends StatefulWidget {
   State<CoursesPage> createState() => _CoursesPageState();
 }
 class _CoursesPageState extends State<CoursesPage> {
-  bool isFavorite = false;
-
+  final Set<String> favoriteCourses = {};
+  void toggleFavorite(String courseCode) {
+    setState(() {
+      if (favoriteCourses.contains(courseCode)) {
+        favoriteCourses.remove(courseCode);
+      } else {
+        favoriteCourses.add(courseCode);
+      }
+    });
+  }
   Widget buildCourseItem(
       BuildContext context,
       dynamic item,
       ) {
     final course = Map<String, dynamic>.from(item);
+    final courseCode = course['code'].toString();
     return CourseCard(
       course: course,
-      isFavorite: isFavorite,
+      isFavorite: favoriteCourses.contains(courseCode),
       onFavoriteChanged: () {
-        setState(() {
-          isFavorite = !isFavorite;
-        });
+        toggleFavorite(courseCode);
+        final isNowFavorite =
+        favoriteCourses.contains(courseCode);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              isFavorite
+              isNowFavorite
                   ? 'Ditambahkan ke favorit'
                   : 'Dihapus dari favorit',
             ),
@@ -161,9 +171,7 @@ class _CoursesPageState extends State<CoursesPage> {
       onLongPress: () {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'Mata kuliah: ${course['title']}',
-            ),
+            content: Text('Mata kuliah: ${course['title']}'),
           ),
         );
       },
@@ -175,14 +183,10 @@ class _CoursesPageState extends State<CoursesPage> {
       future: widget.dataFuture,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const Center(
-            child: Text('Gagal memuat data'),
-          );
+          return const Center(child: Text('Gagal memuat data'));
         }
         if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
         final courses =
         snapshot.data!['courses'] as List<dynamic>;
@@ -194,7 +198,7 @@ class _CoursesPageState extends State<CoursesPage> {
               children: [
                 const Padding(
                   padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Text('Daftar Mata Kuliah \n$studentId - $studentName',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                  child: Text('Daftar Mata Kuliah',style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold)),
                 ),
                 Expanded(
                   child: isExpanded
@@ -209,20 +213,14 @@ class _CoursesPageState extends State<CoursesPage> {
                     ),
                     itemCount: courses.length,
                     itemBuilder: (context, index) {
-                      return buildCourseItem(
-                        context,
-                        courses[index],
-                      );
+                      return buildCourseItem(context,courses[index]);
                     },
                   )
                       : ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: courses.length,
                     itemBuilder: (context, index) {
-                      return buildCourseItem(
-                        context,
-                        courses[index],
-                      );
+                      return buildCourseItem(context,courses[index]);
                     },
                   ),
                 ),
