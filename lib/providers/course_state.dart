@@ -1,18 +1,17 @@
 import 'package:flutter/foundation.dart';
-//2415051010 - I Gusti Ayu Agung Gita Udiani
 
 class CourseState extends ChangeNotifier {
   final Set<String> favorites = {};
-  void toggleFavorite(String id) {
-    if (favorites.contains(id)) {
-      favorites.remove(id);
+  bool isFavorite(String code) {
+    return favorites.contains(code);
+  }
+  int get favoriteCount => favorites.length;
+  void toggleFavorite(String code) {
+    if (favorites.contains(code)) {
+      favorites.remove(code);
     } else {
-      favorites.add(id);
+      favorites.add(code);
     }
     notifyListeners();
   }
-  bool isFavorite(String id) {
-    return favorites.contains(id);
-  }
-  int get favoriteCount => favorites.length;
 }

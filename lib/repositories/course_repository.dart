@@ -3,10 +3,8 @@ import '../services/course_service.dart';
 
 class CourseRepository {
   final CourseService service;
-
   CourseRepository(this.service);
-
-  Future<List<Course>> getCourses() {
-    return service.loadCourses();
+  Future<List<Course>> getCourses() async {
+    return await service.fetchCourses();
   }
 }

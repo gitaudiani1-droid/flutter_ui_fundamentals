@@ -1,36 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/course.dart';
+import '../providers/course_provider.dart';
 import '../providers/course_state.dart';
 import '../widgets/course_card.dart';
 import 'course_detail_page.dart';
 
 class CoursesPage extends StatelessWidget {
-  final Future<Map<String, dynamic>> dataFuture;
-  const CoursesPage({
-    super.key,
-    required this.dataFuture,
-  });
+  const CoursesPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: dataFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+    return Consumer<CourseProvider>(
+      builder: (context, provider, child) {
+        if (provider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (snapshot.hasError) {
-          return Center(child: Text('Gagal memuat data: ${snapshot.error}'));
+        if (provider.error != null) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, size: 48),
+                  const SizedBox(height: 12),
+                  Text('Gagal memuat mata kuliah:\n${provider.error}',textAlign: TextAlign.center),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: provider.loadCourses,
+                    child: const Text('Coba Lagi'),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
-        if (!snapshot.hasData) {
-          return const Center(child: Text('Data mata kuliah tidak tersedia.'));
-        }
-        final rawCourses = snapshot.data!['courses'];
-        if (rawCourses is! List || rawCourses.isEmpty) {
+        final courses = provider.courses;
+        if (courses.isEmpty) {
           return const Center(child: Text('Belum ada mata kuliah.'));
         }
-        final courses = rawCourses
-            .map((item) => Map<String, dynamic>.from(item as Map))
-            .toList();
         return Consumer<CourseState>(
           builder: (context, courseState, child) {
             return Column(
@@ -68,13 +76,16 @@ class CoursesPage extends StatelessWidget {
                         ),
                         itemCount: courses.length,
                         itemBuilder: (context, index) {
-                          final course = courses[index];
-                          final code = course['code'].toString();
-                          final isFavorite =
-                          courseState.isFavorite(code);
+                          final Course course = courses[index];
                           return CourseCard(
-                            course: course,
-                            isFavorite: isFavorite,
+                            course: {
+                              'title': course.title,
+                              'code': course.code,
+                              'credits': course.credits,
+                              'status': course.status,
+                            },
+                            isFavorite:
+                            courseState.isFavorite(course.code),
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -88,12 +99,12 @@ class CoursesPage extends StatelessWidget {
                             onLongPress: () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Mata kuliah ${course['title']}'),
+                                  content: Text('Mata kuliah ${course.title}'),
                                 ),
                               );
                             },
                             onFavoriteChanged: () {
-                              courseState.toggleFavorite(code);
+                              courseState.toggleFavorite(course.code);
                             },
                           );
                         },

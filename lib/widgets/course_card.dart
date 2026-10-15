@@ -26,25 +26,26 @@ class CourseCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              const Icon(Icons.book, size: 32),
+              const Icon(Icons.book,size: 32),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(course['title'].toString(),style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(course['title']?.toString() ?? 'Tanpa Judul',style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
-                    Text('Kode: ${course['code']}'),
+                    Text('Kode: ${course['code'] ?? '-'}'),
                   ],
                 ),
               ),
               IconButton(
-                tooltip: 'Favorite',
+                tooltip: isFavorite
+                    ? 'Hapus dari favorit'
+                    : 'Tambahkan ke favorit',
                 onPressed: onFavoriteChanged,
                 icon: Icon(
-                  isFavorite
-                      ? Icons.favorite
-                      : Icons.favorite_border,
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
                   color: isFavorite ? Colors.red : Colors.grey,
                 ),
               ),
