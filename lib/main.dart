@@ -6,6 +6,8 @@ import 'providers/course_state.dart';
 import 'repositories/course_repository.dart';
 import 'screens/main_page.dart';
 import 'services/course_service.dart';
+const String studentId = "2415051010";
+const String studentName = "I Gusti Ayu Agung Gita Udiani";
 
 void main() {
   runApp(
