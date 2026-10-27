@@ -16,6 +16,11 @@ class CourseCard extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
+    final String title =
+        course['title']?.toString() ?? 'Tanpa Judul';
+    final String code = course['code']?.toString() ?? '-';
+    final String status =
+        course['status']?.toString() ?? 'planned';
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -25,17 +30,28 @@ class CourseCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.book,size: 32),
+              const Padding(
+                padding: EdgeInsets.only(top: 4),
+                child: Icon(Icons.book, size: 32),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(course['title']?.toString() ?? 'Tanpa Judul',style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text('Kode: ${course['code'] ?? '-'}'),
+                    Text('Kode: $code'),
+                    const SizedBox(height: 4),
+                    Text('Status: $status'),
                   ],
                 ),
               ),

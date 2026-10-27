@@ -1,28 +1,33 @@
+//2415051010_I Gusti Ayu Agung Gita Udiani
 class Course {
-  final String title;
+  final int? id;
   final String code;
+  final String title;
   final int credits;
   final String status;
   const Course({
-    required this.title,
+    this.id,
     required this.code,
+    required this.title,
     required this.credits,
-    required this.status,
+    this.status = 'planned',
   });
   factory Course.fromJson(Map<String, dynamic> json) {
+    final int? courseId = json['id'] as int?;
     return Course(
-      title: json['title']?.toString() ?? '',
-      code: json['code']?.toString() ?? '',
-      credits: int.tryParse(json['credits'].toString()) ?? 0,
-      status: json['status']?.toString() ?? '',
+      id: courseId,
+      code: json['code'] as String? ??
+          'API${courseId ?? 0}',
+      title: json['title'] as String? ?? 'Untitled Course',
+      credits: json['credits'] as int? ?? 2,
+      status: json['status'] as String? ?? 'planned',
     );
   }
-  Map<String, dynamic> toJson() {
-    return {
-      'title': title,
-      'code': code,
-      'credits': credits,
-      'status': status,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'code': code,
+    'title': title,
+    'credits': credits,
+    'status': status,
+  };
 }

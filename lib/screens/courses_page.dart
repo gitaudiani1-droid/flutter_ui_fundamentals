@@ -65,47 +65,42 @@ class CoursesPage extends StatelessWidget {
                           : constraints.maxWidth >= 600
                           ? 2
                           : 1;
-                      return GridView.builder(
+
+                      return ListView.builder(
                         padding: const EdgeInsets.all(16),
-                        gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          mainAxisExtent: 100,
-                        ),
                         itemCount: courses.length,
                         itemBuilder: (context, index) {
                           final Course course = courses[index];
-                          return CourseCard(
-                            course: {
-                              'title': course.title,
-                              'code': course.code,
-                              'credits': course.credits,
-                              'status': course.status,
-                            },
-                            isFavorite:
-                            courseState.isFavorite(course.code),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => CourseDetailPage(
-                                    course: course,
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: CourseCard(
+                              course: {
+                                'title': course.title,
+                                'code': course.code,
+                                'credits': course.credits,
+                                'status': course.status,
+                              },
+                              isFavorite: courseState.isFavorite(course.code),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CourseDetailPage(course: course),
                                   ),
-                                ),
-                              );
-                            },
-                            onLongPress: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Mata kuliah ${course.title}'),
-                                ),
-                              );
-                            },
-                            onFavoriteChanged: () {
-                              courseState.toggleFavorite(course.code);
-                            },
+                                );
+                              },
+                              onLongPress: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Mata kuliah ${course.title}'),
+                                  ),
+                                );
+                              },
+                              onFavoriteChanged: () {
+                                courseState.toggleFavorite(course.code);
+                              },
+                            ),
                           );
                         },
                       );

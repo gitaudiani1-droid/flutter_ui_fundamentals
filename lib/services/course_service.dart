@@ -1,18 +1,27 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import '../models/course.dart';
 
 class CourseService {
+  static const String apiUrl =
+      'https://jsonplaceholder.typicode.com/posts';
   Future<List<Course>> fetchCourses() async {
-    final jsonString = await rootBundle.loadString(
-      'assets/data/student_data.json',
+    final response = await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData =
+      jsonDecode(response.body) as List<dynamic>;
+      return jsonData.map((item) {
+        return Course.fromJson(
+          Map<String, dynamic>.from(item as Map),
+        );
+      }).toList();
+    }
+    debugPrint(
+      'Gagal mengambil data. Status: ${response.statusCode}',
     );
-    final decodedData = jsonDecode(jsonString);
-    final List<dynamic> courseData = decodedData['courses'];
-    return courseData
-        .map((item) => Course.fromJson(
-      Map<String, dynamic>.from(item as Map),
-    ))
-        .toList();
+    throw Exception(
+      'Gagal memuat courses: HTTP ${response.statusCode}',
+    );
   }
 }
