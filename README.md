@@ -39,3 +39,23 @@ UI tidak membaca file JSON secara langsung. Pembacaan data dilakukan oleh Servic
 - Flutter dan Dart
 - Provider untuk state management
 - JSON assets sebagai sumber data mata kuliah
+
+## Observasi Endpoint
+### Informasi Endpoint
+- Endpoint URL: https://jsonplaceholder.typicode.com/posts/1
+- HTTP Method: GET
+- Status Code: 200 OK
+- Resource: posts (single post, ID 1)
+
+### Field JSON
+1 `userId` --> Integer --> ID pengguna pemilik post 
+2 `id` --> Integer --> ID post 
+3 `title` --> String --> Judul post
+4 `body` --> String --> Isi post 
+
+### Catatan/Temuan
+Endpoint berhasil menampilkan data dalam format JSON melalui HTTP method GET. 
+Respons berisi empat field, yaitu `userId`, `id`, `title`, dan `body`. 
+Endpoint ini digunakan sebagai latihan awal untuk memahami struktur data REST API 
+sebelum diintegrasikan ke aplikasi Course Data Manager. 
+JSONPlaceholder merupakan API dummy sehingga operasi penulisan data tidak disimpan secara permanen.
