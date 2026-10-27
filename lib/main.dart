@@ -1,3 +1,5 @@
+import 'http_get_test.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'app_constants.dart';
@@ -10,6 +12,9 @@ const String studentId = "2415051010";
 const String studentName = "I Gusti Ayu Agung Gita Udiani";
 
 void main() {
+  fetchTestPost().catchError((error) {
+    debugPrint('Gagal mengambil data: $error');
+  });
   runApp(
     MultiProvider(
       providers: [
