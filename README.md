@@ -59,3 +59,74 @@ Respons berisi empat field, yaitu `userId`, `id`, `title`, dan `body`.
 Endpoint ini digunakan sebagai latihan awal untuk memahami struktur data REST API 
 sebelum diintegrasikan ke aplikasi Course Data Manager. 
 JSONPlaceholder merupakan API dummy sehingga operasi penulisan data tidak disimpan secara permanen.
+
+# Course Data Manager
+
+## Deskripsi Aplikasi
+
+Course Data Manager adalah aplikasi Flutter untuk mengelola data mata kuliah. Aplikasi ini dikembangkan sebagai mini project integrasi dengan backend Supabase.
+
+Fitur utama:
+- Menampilkan daftar mata kuliah.
+- Menambahkan mata kuliah baru.
+- Mengedit dan menghapus data mata kuliah.
+- Menampilkan detail mata kuliah.
+- Menyimpan mata kuliah favorit.
+- Menampilkan loading, empty state, error state, dan feedback kepada pengguna.
+- Mendukung navigasi responsif untuk ukuran layar berbeda.
+
+## Teknologi
+
+- Flutter dan Dart
+- Provider untuk state management
+- Supabase sebagai backend dan database
+- Git dan GitHub untuk version control
+
+## Arsitektur Singkat
+
+Aplikasi menggunakan pemisahan tanggung jawab sebagai berikut:
+
+- **Model:** merepresentasikan data mata kuliah.
+- **Service/Data Source:** menangani komunikasi dengan REST API atau Supabase.
+- **Repository:** menjadi perantara antara data source dan provider.
+- **Provider:** mengelola state dan operasi data.
+- **Screen:** menampilkan halaman dan interaksi pengguna.
+- **Widgets:** menyediakan komponen UI yang dapat digunakan kembali.
+
+Pemilihan data source aktif dilakukan di `main.dart`.
+
+## Cara Menjalankan
+1. Pastikan Flutter SDK dan Git telah terpasang.
+2. Clone repository:
+   ```bash
+   git clone https://github.com/gitaudiani1-droid/flutter_ui_fundamentals.git
+   ```
+3. Masuk ke direktori proyek:
+   ```bash
+   cd flutter_ui_fundamentals
+   ```
+4. Unduh dependency:
+   ```bash
+   flutter pub get
+   ```
+5. Konfigurasikan URL dan publishable key Supabase sesuai lingkungan proyek.
+6. Pastikan tabel `courses` dan policy RLS telah disiapkan.
+7. Jalankan pemeriksaan:
+
+   ```bash
+   flutter analyze
+   ```
+
+8. Jalankan aplikasi:
+
+   ```bash
+   flutter run
+   ```
+
+## Backend
+Backend menggunakan Supabase dengan tabel `courses` untuk menyimpan data mata kuliah. Akses data dilakukan melalui `CourseSupabaseService` dan diteruskan melalui repository serta provider.
+**Catatan keamanan:** Jangan menyimpan `service_role` key, password, atau credential rahasia di repository. Policy RLS harus disesuaikan dengan kebutuhan keamanan aplikasi.
+
+## Pengembang
+Nama: I Gusti Ayu Agung Gita Udiani  
+NIM: 2415051010
