@@ -38,6 +38,7 @@ class CourseSupabaseService implements CourseDataSource {
       Map<String, dynamic>.from(row),
     );
   }
+  //2415051010_I Gusti Ayu Agung Gita Udiani
   @override
   Future<void> updateCourse(int id, Course course) async {
     await _supabase
@@ -50,7 +51,6 @@ class CourseSupabaseService implements CourseDataSource {
     })
         .eq('id', id);
   }
-
   @override
   Future<void> deleteCourse(int id) async {
     await _supabase
