@@ -6,6 +6,7 @@ import '../providers/course_state.dart';
 import '../widgets/course_card.dart';
 import '../widgets/error_view.dart';
 import 'course_detail_page.dart';
+import 'add_course_page.dart';
 
 class CoursesPage extends StatelessWidget {
   const CoursesPage({super.key});
@@ -49,6 +50,18 @@ class CoursesPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ),
+                      IconButton(
+                        tooltip: 'Tambah Mata Kuliah',
+                        icon: const Icon(Icons.add_circle_outline),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AddCoursePage(),
+                            ),
+                          );
+                        },
                       ),
                       const Icon(Icons.favorite,color: Colors.red),
                       const SizedBox(width: 6),

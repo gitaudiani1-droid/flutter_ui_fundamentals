@@ -1,4 +1,3 @@
-//2415051010_I Gusti Ayu Agung Gita Udiani
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/course.dart';
@@ -25,6 +24,23 @@ class CourseApiService {
         Map<String, dynamic>.from(item as Map),
       );
     }).toList();
+  }
+  Future<Course> createCourse(Course course) async {
+    final response = await _client.post(
+      Uri.parse('$baseUrl/posts'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(course.toJson()),
+    );
+    if (response.statusCode == 200 ||
+        response.statusCode == 201) {
+      return Course.fromJson(
+        jsonDecode(response.body)
+        as Map<String, dynamic>,
+      );
+    }
+    throw Exception(
+      'Gagal membuat course: HTTP ${response.statusCode}',
+    );
   }
   void dispose() {
     _client.close();
