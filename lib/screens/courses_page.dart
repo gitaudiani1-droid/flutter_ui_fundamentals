@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../models/course.dart';
 import '../providers/course_provider.dart';
 import '../providers/course_state.dart';
@@ -10,29 +12,26 @@ import 'add_course_page.dart';
 
 class CoursesPage extends StatelessWidget {
   const CoursesPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CourseProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (provider.error != null) {
-          return ErrorView(message: provider.error!,onRetry: provider.loadCourses);
-        }
-        final courses = provider.courses;
-        if (courses.isEmpty) {
           return const Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.menu_book_outlined,size: 48),
-                SizedBox(height: 12),
-                Text('Belum ada mata kuliah.'),
-              ],
-            ),
+            child: CircularProgressIndicator(),
           );
         }
+
+        if (provider.error != null) {
+          return ErrorView(
+            message: provider.error!,
+            onRetry: provider.loadCourses,
+          );
+        }
+
+        final courses = provider.courses;
+
         return Consumer<CourseState>(
           builder: (context, courseState, child) {
             return Column(
@@ -53,7 +52,9 @@ class CoursesPage extends StatelessWidget {
                       ),
                       IconButton(
                         tooltip: 'Tambah Mata Kuliah',
-                        icon: const Icon(Icons.add_circle_outline),
+                        icon: const Icon(
+                          Icons.add_circle_outline,
+                        ),
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -63,18 +64,36 @@ class CoursesPage extends StatelessWidget {
                           );
                         },
                       ),
-                      const Icon(Icons.favorite,color: Colors.red),
+                      const Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
                       const SizedBox(width: 6),
                       Text('${courseState.favoriteCount}'),
                     ],
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
+                  child: courses.isEmpty
+                      ? const Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.menu_book_outlined,
+                          size: 48,
+                        ),
+                        SizedBox(height: 12),
+                        Text('Belum ada mata kuliah.'),
+                      ],
+                    ),
+                  )
+                      : ListView.builder(
                     padding: const EdgeInsets.all(16),
                     itemCount: courses.length,
                     itemBuilder: (context, index) {
                       final Course course = courses[index];
+
                       return Padding(
                         padding: const EdgeInsets.only(
                           bottom: 12,
@@ -103,7 +122,9 @@ class CoursesPage extends StatelessWidget {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(
                               SnackBar(
-                                content: Text('Mata kuliah ${course.title}'),
+                                content: Text(
+                                  'Mata kuliah ${course.title}',
+                                ),
                               ),
                             );
                           },
