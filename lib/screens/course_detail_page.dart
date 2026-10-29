@@ -6,12 +6,63 @@ import '../providers/course_state.dart';
 import 'course_edit_page.dart';
 import '../providers/course_provider.dart';
 
+//2415051010_I Gusti Ayu Agung Gita Udiani
 class CourseDetailPage extends StatelessWidget {
   final Course course;
   const CourseDetailPage({
     super.key,
     required this.course,
   });
+  Future<void> _confirmDelete(
+      BuildContext context,
+      Course course,
+      ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Hapus Mata Kuliah?'),
+        content: Text(
+          'Yakin ingin menghapus ${course.title}?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(dialogContext, false),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            onPressed: () =>
+                Navigator.pop(dialogContext, true),
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    final provider = context.read<CourseProvider>();
+    final courseState = context.read<CourseState>();
+    final success = await provider.deleteCourse(
+      course.id ?? -1,
+    );
+    if (!context.mounted) return;
+    if (success) {
+      if (courseState.isFavorite(course.code)) {
+        courseState.toggleFavorite(course.code);
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Mata kuliah berhasil dihapus'),
+        ),
+      );
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Gagal menghapus mata kuliah'),
+        ),
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,6 +83,19 @@ class CourseDetailPage extends StatelessWidget {
                 _buildDetailRow('Jumlah SKS', '${course.credits} SKS'),
                 _buildDetailRow('Status', course.status),
                 //2415051010_I Gusti Ayu Agung Gita Udiani
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: () => _confirmDelete(context, course),
+                    icon: const Icon(Icons.delete),
+                    label: const Text('Hapus Mata Kuliah'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,

@@ -13,4 +13,7 @@ class CourseRepository {
   Future<void> updateCourse(int id, Course course) async {
     await service.updateCourse(id, course);
   }
+  Future<void> deleteCourse(int id) async {
+    await service.deleteCourse(id);
+  }
 }
