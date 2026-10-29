@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../app_constants.dart';
 import '../models/course.dart';
 import '../providers/course_state.dart';
+import 'course_edit_page.dart';
+import '../providers/course_provider.dart';
 
 class CourseDetailPage extends StatelessWidget {
   final Course course;
@@ -29,6 +31,23 @@ class CourseDetailPage extends StatelessWidget {
                 _buildDetailRow('Kode Mata Kuliah', course.code),
                 _buildDetailRow('Jumlah SKS', '${course.credits} SKS'),
                 _buildDetailRow('Status', course.status),
+                //2415051010_I Gusti Ayu Agung Gita Udiani
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CourseEditPage(course: course),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.edit),
+                    label: const Text('Edit Mata Kuliah'),
+                  ),
+                ),
                 const SizedBox(height: 16),
                 Card(
                   child: ListTile(

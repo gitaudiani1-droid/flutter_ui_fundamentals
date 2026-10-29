@@ -46,4 +46,26 @@ class CourseProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<bool> updateCourse(int id, Course course) async {
+    if (_isSaving) return false;
+    _isSaving = true;
+    notifyListeners();
+    try {
+      await repository.updateCourse(id, course);
+      final index = _courses.indexWhere(
+            (item) => item.id == id,
+      );
+      if (index != -1) {
+        final updatedCourses = List<Course>.from(_courses);
+        updatedCourses[index] = course;
+        _courses = updatedCourses;
+      }
+      return true;
+    } catch (e) {
+      return false;
+    } finally {
+      _isSaving = false;
+      notifyListeners();
+    }
+  }
 }
