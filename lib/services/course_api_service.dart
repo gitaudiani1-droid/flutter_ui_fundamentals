@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/course.dart';
+import 'course_data_source.dart';
 
-class CourseApiService {
+class CourseApiService implements CourseDataSource {
   CourseApiService({http.Client? client})
       : _client = client ?? http.Client();
   final http.Client _client;
   static const String baseUrl =
       'https://jsonplaceholder.typicode.com';
+  @override
   Future<List<Course>> getCourses() async {
     final response = await _client.get(
       Uri.parse('$baseUrl/posts'),
@@ -25,6 +27,7 @@ class CourseApiService {
       );
     }).toList();
   }
+  @override
   Future<Course> createCourse(Course course) async {
     final response = await _client.post(
       Uri.parse('$baseUrl/posts'),
@@ -34,14 +37,14 @@ class CourseApiService {
     if (response.statusCode == 200 ||
         response.statusCode == 201) {
       return Course.fromJson(
-        jsonDecode(response.body)
-        as Map<String, dynamic>,
+        jsonDecode(response.body) as Map<String, dynamic>,
       );
     }
     throw Exception(
       'Gagal membuat course: HTTP ${response.statusCode}',
     );
   }
+  @override
   Future<void> updateCourse(int id, Course course) async {
     final response = await _client.put(
       Uri.parse('$baseUrl/posts/$id'),
@@ -55,6 +58,7 @@ class CourseApiService {
       );
     }
   }
+  @override
   Future<void> deleteCourse(int id) async {
     final response = await _client.delete(
       Uri.parse('$baseUrl/posts/$id'),
@@ -65,7 +69,8 @@ class CourseApiService {
         'Gagal menghapus course: HTTP ${response.statusCode}',
       );
     }
-  }  void dispose() {
+  }
+  void dispose() {
     _client.close();
   }
 }
