@@ -40,6 +40,7 @@ class CourseProvider extends ChangeNotifier {
       ];
       return createdCourse;
     } catch (e) {
+      _error = 'Gagal menambahkan mata kuliah: $e';
       return null;
     } finally {
       _isSaving = false;
