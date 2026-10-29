@@ -20,7 +20,7 @@ class CourseSupabaseService implements CourseDataSource {
     )
         .toList();
   }
-
+  //2415051010_I Gusti Ayu Agung Gita Udiani
   @override
   Future<Course> createCourse(Course course) async {
     final row = await _supabase
@@ -34,9 +34,10 @@ class CourseSupabaseService implements CourseDataSource {
         .select()
         .single();
 
-    return Course.fromJson(Map<String, dynamic>.from(row));
+    return Course.fromJson(
+      Map<String, dynamic>.from(row),
+    );
   }
-
   @override
   Future<void> updateCourse(int id, Course course) async {
     await _supabase
