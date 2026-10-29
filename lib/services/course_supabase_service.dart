@@ -51,6 +51,7 @@ class CourseSupabaseService implements CourseDataSource {
     })
         .eq('id', id);
   }
+  //2415051010_I Gusti Ayu Agung Gita Udiani
   @override
   Future<void> deleteCourse(int id) async {
     await _supabase
