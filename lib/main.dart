@@ -4,7 +4,7 @@ import 'providers/course_provider.dart';
 import 'providers/course_state.dart';
 import 'repositories/course_repository.dart';
 import 'screens/main_page.dart';
-import 'services/course_service.dart';
+import 'services/course_api_service.dart';
 const String studentId = "2415051010";
 const String studentName = "I Gusti Ayu Agung Gita Udiani";
 
@@ -14,7 +14,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(
           create: (_) => CourseProvider(
-            CourseRepository(CourseService()),
+            CourseRepository(CourseApiService()),
           )..loadCourses(),
         ),
         ChangeNotifierProvider(

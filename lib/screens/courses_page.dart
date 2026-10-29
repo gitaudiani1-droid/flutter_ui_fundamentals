@@ -48,7 +48,7 @@ class CoursesPage extends StatelessWidget {
                   child: Row(
                     children: [
                       const Expanded(
-                        child: Text('Daftar Mata Kuliah',style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold)),
+                        child: Text('Daftar Mata Kuliah \n2415051010_I Gusti Ayu Agung Gita Udiani',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold)),
                       ),
                       const Icon(Icons.favorite, color: Colors.red),
                       const SizedBox(width: 6),
@@ -59,7 +59,6 @@ class CoursesPage extends StatelessWidget {
                 Expanded(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      final crossAxisCount =
                       constraints.maxWidth >= 900
                           ? 3
                           : constraints.maxWidth >= 600
