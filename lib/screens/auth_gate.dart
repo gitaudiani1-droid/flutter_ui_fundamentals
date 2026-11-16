@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'login_page.dart';
@@ -13,8 +14,8 @@ class AuthGate extends StatelessWidget {
     return StreamBuilder(
       stream: authService.authStateChanges,
       builder: (context, snapshot) {
-        final session = snapshot.data?.session ??
-            authService.currentSession;
+        final session =
+            snapshot.data?.session ?? authService.currentSession;
 
         if (session == null) {
           return const LoginPage();

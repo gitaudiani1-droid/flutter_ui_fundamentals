@@ -7,6 +7,8 @@ class AuthService {
 
   Session? get currentSession => _supabase.auth.currentSession;
 
+  bool get isLoggedIn => currentSession != null;
+
   Stream<AuthState> get authStateChanges =>
       _supabase.auth.onAuthStateChange;
 
@@ -18,9 +20,7 @@ class AuthService {
     return await _supabase.auth.signUp(
       email: email.trim(),
       password: password,
-      data: {
-        'full_name': fullName.trim(),
-      },
+      data: {'full_name': fullName.trim()},
     );
   }
 

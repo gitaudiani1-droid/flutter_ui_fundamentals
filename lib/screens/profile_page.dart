@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../app_constants.dart';
+import '../services/auth_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -72,6 +73,27 @@ class _ProfilePageState extends State<ProfilePage> {
       const SnackBar(content: Text('Data berhasil disimpan')),
     );
   }
+  Future<void> _logout() async {
+    try {
+      await AuthService().logout();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Berhasil logout'),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal logout: $error'),
+        ),
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -81,6 +103,18 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: OutlinedButton.icon(
+                onPressed: _logout,
+                icon: const Icon(Icons.logout),
+                label: const Text('Logout'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
             const Text('Form Feedback',style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             TextFormField(
