@@ -7,11 +7,35 @@ import 'repositories/course_repository.dart';
 import 'services/course_supabase_service.dart';
 import 'supabase_config.dart';
 import 'screens/auth_gate.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'firebase_options.dart';
 
 //2415051010_I Gusti Ayu Agung Gita Udiani
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(
+    RemoteMessage message,
+    ) async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  debugPrint('Background notification: ${message.messageId}');
+}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Inisialisasi Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Registrasi background notification handler
+  FirebaseMessaging.onBackgroundMessage(
+    firebaseMessagingBackgroundHandler,
+  );
+
+  // Inisialisasi Supabase
   await Supabase.initialize(
     url: SupabaseConfig.supabaseUrl,
     publishableKey: SupabaseConfig.supabasePublishableKey,
@@ -23,7 +47,9 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<CourseState>(create: (_) => CourseState()),
+        ChangeNotifierProvider<CourseState>(
+          create: (_) => CourseState(),
+        ),
         ChangeNotifierProvider<CourseProvider>(
           create: (_) => CourseProvider(repository)..loadCourses(),
         ),
