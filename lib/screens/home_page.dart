@@ -16,6 +16,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _requestNotificationPermission();
+    _getFcmToken();
   }
 
 Future<void> _requestNotificationPermission() async {
@@ -28,7 +29,24 @@ Future<void> _requestNotificationPermission() async {
     debugPrint('Gagal meminta izin notifikasi: $e');
   }
 }
+  Future<void> _getFcmToken() async {
+    try {
+      final token =
+      await NotificationService.instance.getToken();
 
+      debugPrint('FCM Token berhasil diperoleh: $token');
+
+      if (token != null) {
+        NotificationService.instance.listenTokenRefresh(
+              (newToken) {
+            debugPrint('Token terbaru: $newToken');
+          },
+        );
+      }
+    } catch (e) {
+      debugPrint('Gagal mendapatkan FCM Token: $e');
+    }
+  }
 @override
   Widget build(BuildContext context) {
     return Scaffold(

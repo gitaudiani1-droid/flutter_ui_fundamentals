@@ -17,12 +17,29 @@ class NotificationService {
       sound: true,
     );
 
-    final status = settings.authorizationStatus;
-
     debugPrint(
-      'Notification permission: ${status.name}',
+      'Notification permission: '
+          '${settings.authorizationStatus.name}',
     );
 
-    return status;
+    return settings.authorizationStatus;
+  }
+
+  Future<String?> getToken() async {
+    final token = await _messaging.getToken();
+
+    debugPrint('FCM Token: $token');
+
+    return token;
+  }
+
+  void listenTokenRefresh(
+      void Function(String token) onRefresh,
+      ) {
+    _messaging.onTokenRefresh.listen((newToken) {
+      debugPrint('FCM Token diperbarui');
+
+      onRefresh(newToken);
+    });
   }
 }
