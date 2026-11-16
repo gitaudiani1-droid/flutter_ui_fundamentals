@@ -1,13 +1,35 @@
-
 import 'package:flutter/material.dart';
 import '../app_constants.dart';
+import '../services/notifocation_service.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   static const Color primaryColor = Color(0xFF4F46E5);
 
   @override
+  void initState() {
+    super.initState();
+    _requestNotificationPermission();
+  }
+
+Future<void> _requestNotificationPermission() async {
+  try {
+    final status =
+        await NotificationService.instance.requestPermission();
+
+    debugPrint('Status izin notifikasi: ${status.name}');
+  } catch (e) {
+    debugPrint('Gagal meminta izin notifikasi: $e');
+  }
+}
+
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
