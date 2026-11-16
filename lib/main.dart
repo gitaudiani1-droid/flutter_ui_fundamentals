@@ -6,7 +6,7 @@ import 'providers/course_state.dart';
 import 'repositories/course_repository.dart';
 import 'services/course_supabase_service.dart';
 import 'supabase_config.dart';
-import 'screens/main_page.dart';
+import 'screens/auth_gate.dart';
 
 //2415051010_I Gusti Ayu Agung Gita Udiani
 Future<void> main() async {
@@ -92,7 +92,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const MainPage(),
+      home: const AuthGate(),
     );
   }
 }
