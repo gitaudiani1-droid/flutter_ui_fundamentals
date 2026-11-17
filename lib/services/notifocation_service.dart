@@ -1,6 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
+final GlobalKey<ScaffoldMessengerState> messengerKey =
+  GlobalKey<ScaffoldMessengerState>();
 class NotificationService {
   NotificationService._();
 
@@ -32,6 +34,37 @@ class NotificationService {
 
     return token;
   }
+
+  Future<void> init() async {
+    await requestPermission();
+
+    final token = await getToken();
+
+    debugPrint('FCM Token saat init: $token');
+
+    await _messaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint('[FOREGROUND] Notification received');
+      debugPrint('title: ${message.notification?.title}');
+      debugPrint('body: ${message.notification?.body}');
+      debugPrint('data: ${message.data}');
+
+      final title = message.notification?.title ?? 'Notifikasi';
+      final body = message.notification?.body ?? '';
+
+      messengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Text('$title\n$body'),
+        ),
+      );
+    });
+  }
+
 
   void listenTokenRefresh(
       void Function(String token) onRefresh,
