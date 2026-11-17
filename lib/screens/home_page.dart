@@ -16,36 +16,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     NotificationService.instance.init();
+    NotificationService.instance.setupInteractedMessage();
   }
 
-Future<void> _requestNotificationPermission() async {
-  try {
-    final status =
-        await NotificationService.instance.requestPermission();
-
-    debugPrint('Status izin notifikasi: ${status.name}');
-  } catch (e) {
-    debugPrint('Gagal meminta izin notifikasi: $e');
-  }
-}
-  Future<void> _getFcmToken() async {
-    try {
-      final token =
-      await NotificationService.instance.getToken();
-
-      debugPrint('FCM Token berhasil diperoleh: $token');
-
-      if (token != null) {
-        NotificationService.instance.listenTokenRefresh(
-              (newToken) {
-            debugPrint('Token terbaru: $newToken');
-          },
-        );
-      }
-    } catch (e) {
-      debugPrint('Gagal mendapatkan FCM Token: $e');
-    }
-  }
 @override
   Widget build(BuildContext context) {
     return Scaffold(

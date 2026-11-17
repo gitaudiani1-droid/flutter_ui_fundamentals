@@ -1,5 +1,9 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/course_provider.dart';
+import '../screens/course_detail_page.dart';
+import '../app_navigator.dart';
 
 final GlobalKey<ScaffoldMessengerState> messengerKey =
   GlobalKey<ScaffoldMessengerState>();
@@ -63,6 +67,67 @@ class NotificationService {
         ),
       );
     });
+  }
+
+  Future<void> setupInteractedMessage() async {
+    debugPrint('=== SETUP NOTIFICATION TAP ===');
+
+    final initialMessage = await _messaging.getInitialMessage();
+
+    if (initialMessage != null) {
+      debugPrint('=== INITIAL MESSAGE FOUND ===');
+      _handleNotificationTap(initialMessage);
+    } else {
+      debugPrint('Tidak ada initial message');
+    }
+
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      debugPrint('=== NOTIFICATION OPENED FROM BACKGROUND ===');
+      _handleNotificationTap(message);
+    });
+  }
+
+  void _handleNotificationTap(RemoteMessage message) {
+    debugPrint('=== NOTIFICATION TAPPED ===');
+    debugPrint('Notification data: ${message.data}');
+    debugPrint('Course ID: ${message.data['course_id']}');
+    final courseId = int.tryParse(
+      message.data['course_id']?.toString() ?? '',
+    );
+
+    if (courseId == null) {
+      debugPrint('Course ID tidak valid.');
+      return;
+    }
+
+    final context = navigatorKey.currentContext;
+
+    if (context == null) {
+      debugPrint('Navigator belum siap.');
+      return;
+    }
+
+    final courseProvider = Provider.of<CourseProvider>(
+      context,
+      listen: false,
+    );
+
+    final matchingCourses = courseProvider.courses.where(
+          (course) => course.id == courseId,
+    );
+
+    if (matchingCourses.isEmpty) {
+      debugPrint('Kursus dengan ID $courseId tidak ditemukan.');
+      return;
+    }
+
+    final course = matchingCourses.first;
+
+    navigatorKey.currentState?.push(
+      MaterialPageRoute(
+        builder: (_) => CourseDetailPage(course: course),
+      ),
+    );
   }
 
 

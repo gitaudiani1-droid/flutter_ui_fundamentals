@@ -11,6 +11,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
 import 'services/notifocation_service.dart';
+import 'app_navigator.dart';
 
 //2415051010_I Gusti Ayu Agung Gita Udiani
 @pragma('vm:entry-point')
@@ -68,9 +69,11 @@ class MyApp extends StatelessWidget {
     const primaryColor = Color(0xFF4F46E5);
 
     return MaterialApp(
-      title: 'Course Data Manager',
+      navigatorKey: navigatorKey,
       scaffoldMessengerKey: messengerKey,
+      title: 'Course Data Manager',
       debugShowCheckedModeBanner: false,
+      home: const AuthGate(),
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
@@ -120,7 +123,6 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const AuthGate(),
     );
   }
 }
